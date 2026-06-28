@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — RR Garments</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Elms+Sans:wght@400;700&family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/logo.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="admin">
+<div class="site">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="index.html"><img src="images/logo.png" alt="RR Garments logo"><span class="logo-text">RR<span class="dot">.</span>GARMENTS</span></a>
+      <nav class="site-nav">
+        <a href="index.html">Store</a>
+        <a href="admin.html" class="active">Admin</a>
+      </nav>
+      <div class="header-icons">
+        <a class="icon-btn" href="index.html" aria-label="Back to store"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke-linejoin="round"/><path d="M9 22V12h6v10" stroke-linecap="round"/></svg></a>
+        <button class="icon-btn" data-cart-open aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" stroke-linejoin="round"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0" stroke-linecap="round"/></svg><span class="cart-badge" style="display:none">0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Login screen (shown if not logged in) -->
+    <div id="adminLogin" class="admin-login" style="display:none">
+      <div class="auth-card">
+        <h1>ADMIN LOGIN</h1>
+        <p class="sub">Sign in with your admin account to manage the store</p>
+        <div class="auth-error" id="loginError"></div>
+        <form id="loginForm">
+          <div class="form-group"><label for="lemail">Email</label><input id="lemail" type="email" required placeholder="admin@rrgarments.com"></div>
+          <div class="form-group"><label for="lpass">Password</label><input id="lpass" type="password" required placeholder="••••••••"></div>
+          <button class="btn btn-primary btn-block" type="submit" id="loginBtn">SIGN IN</button>
+        </form>
+        <p class="auth-foot">Admin access only. <a href="index.html">← Back to store</a></p>
+      </div>
+    </div>
+
+    <!-- Dashboard (shown after login) -->
+    <div id="adminDashboard" style="display:none">
+      <div class="admin-page">
+        <div class="admin-head">
+          <div>
+            <p class="eyebrow">Dashboard</p>
+            <h1>ADMIN PANEL</h1>
+            <p class="sub" id="welcomeText">Manage your products and orders</p>
+          </div>
+          <button class="btn btn-outline" id="adminLogoutBtn">SIGN OUT</button>
+        </div>
+
+        <!-- Setup banner (shown if Firebase not configured) -->
+        <div id="setupBanner" class="setup-banner" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01" stroke-linecap="round"/></svg>
+          <div>
+            <p style="font-weight:700">FIREBASE NOT CONFIGURED YET</p>
+            <p style="margin-top:4px;color:var(--muted);font-size:13px">You're in demo mode. Products load from <code>products.json</code> and orders save locally. To enable full features (cloud products, order management), follow the <a href="FIREBASE_SETUP.html">Firebase Setup Guide</a>.</p>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card"><p class="label">Products</p><p class="val" id="statProducts">0</p></div>
+          <div class="stat-card"><p class="label">New Orders</p><p class="val" id="statNewOrders">0</p></div>
+          <div class="stat-card"><p class="label">Total Orders</p><p class="val" id="statTotalOrders">0</p></div>
+          <div class="stat-card"><p class="label">Revenue</p><p class="val inr" id="statRevenue">₹0</p></div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-tab="products">PRODUCTS <span class="count" id="tabProductCount">0</span></button>
+          <button class="admin-tab" data-tab="orders">ORDERS <span class="count" id="tabOrderCount">0</span></button>
+        </div>
+
+        <!-- Products tab -->
+        <div id="productsTab">
+          <div class="admin-toolbar">
+            <div class="search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3" stroke-linecap="round"/></svg>
+              <input type="text" id="productSearch" placeholder="Search products...">
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-outline" id="seedProductsBtn" title="Import starter products into your database">IMPORT STARTER PRODUCTS</button>
+              <button class="btn btn-primary" id="addProductBtn">+ ADD PRODUCT</button>
+            </div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="productsTableBody"></tbody>
+            </table>
+          </div>
+          <div id="productsEmpty" class="admin-empty" style="display:none">
+            <p>NO PRODUCTS YET</p>
+            <small>Click "Add Product" to create your first product</small>
+          </div>
+        </div>
+
+        <!-- Orders tab -->
+        <div id="ordersTab" style="display:none">
+          <div class="admin-toolbar">
+            <div class="search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3" stroke-linecap="round"/></svg>
+              <input type="text" id="orderSearch" placeholder="Search by order number or customer name...">
+            </div>
+            <button class="btn btn-outline" id="refreshOrdersBtn">REFRESH</button>
+          </div>
+          <div id="ordersList"></div>
+          <div id="ordersEmpty" class="admin-empty" style="display:none">
+            <p>NO ORDERS YET</p>
+            <small>Orders will appear here when customers place them</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="logo" href="index.html"><img src="images/logo.png" alt="RR Garments logo"><span class="logo-text">RR<span class="dot">.</span>GARMENTS</span></a>
+          <p>Minimalist, streetwear-influenced essentials. Monochrome with an olive accent.</p>
+          <div class="footer-store"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><div><p class="label">Our Store</p><p class="addr">Gopiganj Road<br>Between Pillar No. 21 & 22</p><a class="view" href="contact.html">Visit us</a></div></div>
+        </div>
+        <div class="footer-col"><h4>Shop</h4><ul><li><a href="index.html">New Collection</a></li><li><a href="products.html">All Products</a></li><li><a href="products.html?category=Men">Men</a></li></ul></div>
+        <div class="footer-col"><h4>Help</h4><ul><li><a href="shipping.html">Shipping</a></li><li><a href="returns.html">Returns</a></li><li><a href="size-guide.html">Size Guide</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>About</h4><ul><li><a href="our-story.html">Our Story</a></li><li><a href="sustainability.html">Sustainability</a></li><li><a href="contact.html">Our Store</a></li></ul></div>
+      </div>
+      <div class="footer-bottom"><p>© <span id="year"></span> RR Garments. All rights reserved.</p><p class="right">7-day returns · Designed in monochrome</p></div>
+    </div>
+  </footer>
+</div>
+
+<!-- Product modal (add/edit) -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">ADD PRODUCT</h2>
+      <button class="icon-btn" id="modalCloseBtn" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <form id="productForm">
+        <input type="hidden" id="productId">
+        <div class="form-group">
+          <label for="pName">Product Name *</label>
+          <input id="pName" type="text" required placeholder="e.g. Heavyweight Cotton Tee">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pCategory">Category *</label>
+            <select id="pCategory">
+              <option value="Men">Men</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="pStock">Stock Quantity *</label>
+            <input id="pStock" type="number" min="0" required value="10">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pPrice">Price (₹) *</label>
+            <input id="pPrice" type="number" min="0" required placeholder="899">
+          </div>
+          <div class="form-group">
+            <label for="pSalePrice">Sale Price (₹)</label>
+            <input id="pSalePrice" type="number" min="0" placeholder="Leave empty if no sale">
+            <div class="hint">Set a lower price to show a "SALE" badge</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Product Image *</label>
+          <div class="image-upload-area">
+            <div class="image-preview" id="imagePreview">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5a2 2 0 0 0-2.8 0L6 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>No image selected</span>
+            </div>
+            <div class="image-upload-buttons">
+              <button type="button" class="btn btn-outline" id="uploadImageBtn" style="flex:1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                UPLOAD IMAGE
+              </button>
+              <input type="file" id="imageFileInput" accept="image/*" style="display:none">
+              <button type="button" class="btn btn-outline" id="useUrlBtn" style="flex:1">USE URL INSTEAD</button>
+            </div>
+            <div class="image-url-field" id="imageUrlField" style="display:none">
+              <input id="pImage" type="text" placeholder="images/p1-tee.jpg or https://...">
+              <div class="hint">Use a relative path like <code>images/p1-tee.jpg</code> or a full URL</div>
+            </div>
+            <div class="hint" id="uploadHint">Upload an image from your device (stored in Firebase Storage) — or click "USE URL INSTEAD" to paste a link.</div>
+            <div class="upload-progress" id="uploadProgress" style="display:none">
+              <div class="upload-progress-bar"><div class="upload-progress-fill" id="uploadProgressFill"></div></div>
+              <span id="uploadProgressText">Uploading… 0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="pSizes">Sizes (comma-separated) *</label>
+          <input id="pSizes" type="text" required placeholder="XS, S, M, L, XL" value="S, M, L, XL">
+        </div>
+        <div class="form-group">
+          <label for="pColors">Colors (name + hex, one per line)</label>
+          <textarea id="pColors" placeholder="Off-Black, #1a1a1a&#10;Olive, #6b6f3c">Off-Black, #1a1a1a
+Off-White, #f5f5f5
+Olive, #6b6f3c</textarea>
+          <div class="hint">Format: <code>Color Name, #hexcode</code> — one per line</div>
+        </div>
+        <div class="form-group">
+          <label for="pDesc">Description</label>
+          <textarea id="pDesc" placeholder="Describe the product..."></textarea>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" id="pFeatured">
+          <label for="pFeatured" style="margin:0">Show in "Featured" on homepage</label>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" id="pInStock" checked>
+          <label for="pInStock" style="margin:0">In stock (available for purchase)</label>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" id="modalCancelBtn">CANCEL</button>
+      <button class="btn btn-primary" id="modalSaveBtn">SAVE PRODUCT</button>
+    </div>
+  </div>
+</div>
+
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+<script src="js/firebase-auth.js"></script>
+<script src="js/firebase-db.js"></script>
+<script src="js/script.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
