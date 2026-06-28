@@ -1,0 +1,54 @@
+[
+  {
+    "id": "heavyweight-tee",
+    "name": "Heavyweight Cotton Tee",
+    "price": 899,
+    "salePrice": 699,
+    "description": "A 240gsm garment-dyed cotton tee with a relaxed boxy fit and a clean ribbed collar. Built to hold its shape wash after wash.",
+    "images": ["images/p1-tee.jpg"],
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": [
+      { "name": "Off-Black", "hex": "#1a1a1a" },
+      { "name": "Off-White", "hex": "#f5f5f5" },
+      { "name": "Olive", "hex": "#6b6f3c" }
+    ],
+    "category": "Men",
+    "stock": 42,
+    "inStock": true,
+    "featured": true
+  },
+  {
+    "id": "relaxed-cargo",
+    "name": "Relaxed Cargo Pant",
+    "price": 1999,
+    "salePrice": null,
+    "description": "Relaxed straight-leg cargo in a durable cotton twill. Six-pocket construction with a matte snap closure and tapered ankle.",
+    "images": ["images/p2-cargo.jpg"],
+    "sizes": ["S", "M", "L", "XL"],
+    "colors": [
+      { "name": "Olive", "hex": "#6b6f3c" },
+      { "name": "Off-Black", "hex": "#1a1a1a" }
+    ],
+    "category": "Men",
+    "stock": 27,
+    "inStock": true,
+    "featured": true
+  },
+  {
+    "id": "oversized-hoodie",
+    "name": "Oversized Pullover Hoodie",
+    "price": 2499,
+    "salePrice": null,
+    "description": "Heavy 400gsm brushed-back fleece hoodie with an oversized drop-shoulder cut, double-lined hood and a kangaroo pocket.",
+    "images": ["images/p3-hoodie.jpg"],
+    "sizes": ["S", "M", "L", "XL"],
+    "colors": [
+      { "name": "Off-Black", "hex": "#1a1a1a" },
+      { "name": "Off-White", "hex": "#f5f5f5" }
+    ],
+    "category": "Men",
+    "stock": 31,
+    "inStock": true,
+    "featured": false
+  }
+]
