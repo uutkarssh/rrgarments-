@@ -23,7 +23,7 @@
 
   // SECURITY: only emails listed here can access the admin panel.
   // Replace with YOUR real admin email(s) — the one(s) you sign up with.
-  var ADMIN_EMAILS = ["utkarshmaurya917027@gmail.com"];
+  var ADMIN_EMAILS = ["utkarshmaurya917027@gmail.com","adminrrg@gamil.com];
 
   var allProducts = [];
   var allOrders = [];
